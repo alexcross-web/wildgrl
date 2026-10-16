@@ -29,7 +29,7 @@
             border: 4px solid rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             border-top: 4px solid #38bdf8; /* Голубой неон */
-            border-right: 4px solid #a855f7; /* Розово-фиолетовый акцент в стиле WildGrl */
+            border-right: 4px solid #a855f7; /* Розово-фиолетовый акцент */
             animation: spin 1s linear infinite;
         }
 
@@ -50,13 +50,24 @@
             justify-content: center;
             align-items: center;
             transition: opacity 0.5s ease, visibility 0.5s ease;
+            padding: 24px;
+        }
+
+        /* Контейнер для точного выравнивания */
+        .init-container {
+            text-align: center;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
         }
 
         .loader-text {
             font-size: 1.1rem;
             font-weight: 500;
             color: #e2e8f0;
+            text-align: center;
             animation: pulse 1.5s ease-in-out infinite;
+            word-wrap: break-word;
         }
 
         /* ЭКРАН 2: ГЛАВНЫЙ ИНТЕРФЕЙС WILDGRL С ЛИНЕЙНОЙ ЗАГРУЗКОЙ */
@@ -84,6 +95,15 @@
             transform: translateY(0);
         }
 
+        /* Контейнер для бейджей */
+        .badge-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 35px;
+        }
+
         .badge {
             display: inline-block;
             background: linear-gradient(90deg, #a855f7, #ec4899); /* Розово-пурпурный градиент */
@@ -92,9 +112,20 @@
             border-radius: 20px;
             font-size: 0.85rem;
             font-weight: 600;
-            margin-bottom: 35px;
             letter-spacing: 1px;
             text-transform: uppercase;
+        }
+
+        /* ПЛАШКА ПРЕДУПРЕЖДЕНИЯ 18+ */
+        .badge-adult {
+            display: inline-block;
+            background: #ef4444; /* Насыщенный красный цвет */
+            color: white;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         h1 {
@@ -148,6 +179,7 @@
             color: #ef4444;
             font-size: 1rem;
             margin-top: 10px;
+            text-align: center;
         }
         .retry-btn {
             display: none;
@@ -164,17 +196,22 @@
 </head>
 <body>
 
-    <!-- ЭКРАН 1: КРУГОВОЙ ПРЕЛОАДЕР (ЗАЩИТА СОЕДИНЕНИЯ) -->
+    <!-- ЭКРАН 1: КРУГОВОЙ ПРЕЛОАДЕР -->
     <div id="screen-init">
-        <div class="spinner" id="init-spinner"></div>
-        <div class="loader-text" id="init-text">Установка зашифрованного соединения...</div>
-        <div id="error-msg" class="loader-error">⚠️ Отсутствует подключение к интернету.</div>
-        <button id="retry-button" class="retry-btn" onclick="window.location.reload()">Повторить попытку</button>
+        <div class="init-container">
+            <div class="spinner" id="init-spinner"></div>
+            <div class="loader-text" id="init-text">Установка зашифрованного соединения...</div>
+            <div id="error-msg" class="loader-error">⚠️ Отсутствует подключение к интернету.</div>
+            <button id="retry-button" class="retry-btn" onclick="window.location.reload()">Повторить попытку</button>
+        </div>
     </div>
 
     <!-- ЭКРАН 2: ИНТЕРФЕЙС WILDGRL С ЛИНЕЙНЫМ ИНДИКАТОРОМ -->
     <div id="screen-main">
-        <span class="badge">WildGrl AI</span>
+        <div class="badge-container">
+            <span class="badge-adult">18+ ONLY</span>
+            <span class="badge">WildGrl AI</span>
+        </div>
         <h1>Твоя AI Девушка<br>Без цензуры</h1>
         <p class="subtitle">Единственная AI-подруга, которая помнит всё, отправляет фото и видео — и становится ближе с каждым разговором.</p>
         
@@ -185,7 +222,7 @@
 
     <script>
         // Конечный адрес целевого сайта
-        const TARGET_URL = "https://wildgirl.net/";
+        const TARGET_URL = "https://wildgirl.net";
 
         // Динамический расчет высоты под экраны мобильных устройств
         function fixMobileHeight() {
