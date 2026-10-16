@@ -1,43 +1,261 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>WildGrl AI</title>
+    <style>
+        /* Базовое обнуление для мобильного WebView конструктора */
+        html, body {
+            width: 100% !important;
+            height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background-color: #0b0f19; /* Фирменный темный фон */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #ffffff;
+            overflow: hidden !important;
+        }
 
+        * {
+            box-sizing: border-box;
+        }
 
+        /* КРУГОВОЙ СПИННЕР ДЛЯ ПЕРВОГО ЭКРАНА */
+        .spinner {
+            width: 55px;
+            height: 55px;
+            margin: 0 auto 20px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #38bdf8; /* Голубой неон */
+            border-right: 4px solid #a855f7; /* Розово-фиолетовый акцент в стиле WildGrl */
+            animation: spin 1s linear infinite;
+        }
 
-    
-    
-    Мой сайт на GitHub
-    
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+
+        /* ЭКРАН 1: ШИФРОВАНИЕ И ПРИВАТНОСТЬ */
+        #screen-init {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0b0f19;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loader-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #e2e8f0;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        /* ЭКРАН 2: ГЛАВНЫЙ ИНТЕРФЕЙС WILDGRL С ЛИНЕЙНОЙ ЗАГРУЗКОЙ */
+        #screen-main {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0b0f19;
+            z-index: 99998;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
             text-align: center;
-            padding: 50px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
         }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+        #screen-main.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
-        h1 {
-            color: #2c3e50;
-        }
-        .btn {
+
+        .badge {
             display: inline-block;
-            background-color: #0366d6;
+            background: linear-gradient(90deg, #a855f7, #ec4899); /* Розово-пурпурный градиент */
             color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-top: 20px;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 35px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
-    
 
+        h1 {
+            font-size: 2.1rem;
+            font-weight: 700;
+            line-height: 1.25;
+            margin-bottom: 25px;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+        }
 
-    
-        Привет, GitHub!
-        Это моя первая веб-страница, запущенная через GitHub Pages.
-        Перейти на GitHub
-    
+        p.subtitle {
+            color: #94a3b8;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 50px;
+            max-width: 420px;
+        }
 
+        /* КОНТЕЙНЕР ЛИНЕЙНОГО PROGRESS BAR */
+        .progress-bar-container {
+            width: 100%;
+            max-width: 280px;
+            height: 6px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #38bdf8, #a855f7);
+            border-radius: 10px;
+        }
+
+        /* Класс запуска анимации линии на 3 секунды */
+        .animate-progress {
+            animation: fillProgress 3s linear forwards;
+        }
+
+        @keyframes fillProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* СТИЛИ ОШИБКИ ПРИ ОТСУТСТВИИ ИНТЕРНЕТА */
+        .loader-error {
+            display: none;
+            color: #ef4444;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+        .retry-btn {
+            display: none;
+            margin: 20px auto 0;
+            background-color: #222531;
+            color: #fff;
+            border: 1px solid #3f445b;
+            padding: 12px 26px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ЭКРАН 1: КРУГОВОЙ ПРЕЛОАДЕР (ЗАЩИТА СОЕДИНЕНИЯ) -->
+    <div id="screen-init">
+        <div class="spinner" id="init-spinner"></div>
+        <div class="loader-text" id="init-text">Установка зашифрованного соединения...</div>
+        <div id="error-msg" class="loader-error">⚠️ Отсутствует подключение к интернету.</div>
+        <button id="retry-button" class="retry-btn" onclick="window.location.reload()">Повторить попытку</button>
+    </div>
+
+    <!-- ЭКРАН 2: ИНТЕРФЕЙС WILDGRL С ЛИНЕЙНЫМ ИНДИКАТОРОМ -->
+    <div id="screen-main">
+        <span class="badge">WildGrl AI</span>
+        <h1>Твоя AI Девушка<br>Без цензуры</h1>
+        <p class="subtitle">Единственная AI-подруга, которая помнит всё, отправляет фото и видео — и становится ближе с каждым разговором.</p>
+        
+        <div class="progress-bar-container">
+            <div id="main-progress-bar" class="progress-bar-fill"></div>
+        </div>
+    </div>
+
+    <script>
+        // Конечный адрес целевого сайта
+        const TARGET_URL = "https://wildgirl.net/";
+
+        // Динамический расчет высоты под экраны мобильных устройств
+        function fixMobileHeight() {
+            const height = window.innerHeight + 'px';
+            document.getElementById('screen-init').style.height = height;
+            document.getElementById('screen-main').style.height = height;
+        }
+        window.addEventListener('resize', fixMobileHeight);
+        window.addEventListener('orientationchange', fixMobileHeight);
+
+        // Нативный редирект для WebView
+        function doDirectRedirect() {
+            if (navigator.onLine) {
+                window.location.replace(TARGET_URL);
+            } else {
+                showOfflineError();
+            }
+        }
+
+        // Логика вывода ошибки сети
+        function showOfflineError() {
+            document.getElementById("screen-main").style.display = "none";
+            const scrInit = document.getElementById("screen-init");
+            scrInit.style.display = "flex";
+            scrInit.style.opacity = "1";
+            scrInit.style.visibility = "visible";
+
+            const spinner = document.getElementById("init-spinner");
+            const statusText = document.getElementById("init-text");
+            
+            spinner.style.borderTopColor = "#ef4444";
+            spinner.style.borderRightColor = "#ef4444";
+            spinner.style.animation = "none"; 
+            statusText.textContent = "Не удалось подключиться к сети";
+            statusText.style.animation = "none";
+
+            document.getElementById("error-msg").style.display = "block";
+            document.getElementById("retry-button").style.display = "block";
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            fixMobileHeight();
+
+            if (navigator.onLine) {
+                // ШАГ 1: Через 3 секунды плавно переключаем прелоадер на главный экран
+                setTimeout(function() {
+                    const scrInit = document.getElementById("screen-init");
+                    const scrMain = document.getElementById("screen-main");
+                    const progressBar = document.getElementById("main-progress-bar");
+                    
+                    scrInit.style.opacity = "0";
+                    scrInit.style.visibility = "hidden";
+                    scrMain.classList.add("visible");
+                    
+                    // Запуск плавной анимации линии
+                    progressBar.classList.add("animate-progress");
+
+                    // ШАГ 2: Еще через 3 секунды выполняем прямой переход на целевой сайт
+                    setTimeout(doDirectRedirect, 3000);
+
+                }, 3000);
+            } else {
+                showOfflineError();
+            }
+
+            window.addEventListener('online', function() {
+                window.location.reload();
+            });
+        });
+    </script>
+
+</body>
+</html>
